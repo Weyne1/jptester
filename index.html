@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JpTester Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h1>JpTester Web</h1>
+        </header>
+
+        <!-- Кнопки управления тестом (появляются только во время прохождения) -->
+        <div id="test-header-buttons" class="test-header-buttons">
+            <button id="back-to-list" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Назад к списку тестов
+            </button>
+            <button id="finish-test" class="back-btn finish-btn">
+                <i class="fas fa-flag"></i> Завершить тест
+            </button>
+        </div>
+
+        <div id="test-list-container">
+            <div class="no-tests">Загрузка списка тестов...</div>
+        </div>
+
+        <div id="test-container">
+            <div class="test-header">
+                <h2 id="test-title">Краткое описание</h2>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number" id="question-number-display">Вопрос 1 из 10</div>
+                <div class="question-text" id="question-text">Текст вопроса будет здесь</div>
+                
+                <div class="answers-container" id="answers-container">
+                </div>
+            </div>
+            
+            <div class="controls-container">
+                <button class="show-answers-btn" id="show-answers-btn">
+                    <i class="fas fa-check"></i>
+                </button>
+                
+                <div class="nav-controls">
+                    <button class="nav-btn" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="current-question" id="current-question-display">1/10</div>
+                    <button class="nav-btn" id="next-btn">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-container">
+            <div class="results-card">
+                <div class="result-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h2>Тест завершён!</h2>
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Правильных ответов:</span>
+                        <span class="stat-value" id="correct-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Процент выполнения:</span>
+                        <span class="stat-value" id="score-percent">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Затраченное время:</span>
+                        <span class="stat-value" id="time-spent">0 мин 0 сек</span>
+                    </div>
+                    <div class="stat-item total-questions">
+                        <span class="stat-label">Всего вопросов:</span>
+                        <span class="stat-value" id="total-questions-count">0</span>
+                    </div>
+                </div>
+                <button id="restart-test" class="btn-primary">Пройти снова</button>
+                <button id="back-to-tests" class="btn-secondary">К списку тестов</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
