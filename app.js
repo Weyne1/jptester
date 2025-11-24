@@ -17,7 +17,6 @@ const resultsContainer = document.getElementById('results-container');
 const testHeaderButtons = document.getElementById('test-header-buttons');
 const backToListBtn = document.getElementById('back-to-list');
 const finishTestBtn = document.getElementById('finish-test');
-const testTitle = document.getElementById('test-title');
 const questionText = document.getElementById('question-text');
 const answersContainer = document.getElementById('answers-container');
 const currentQuestionDisplay = document.getElementById('current-question-display');
@@ -48,38 +47,86 @@ async function loadTests() {
 }
 
 // Отображение списка тестов
-function renderTestList() {
+async function renderTestList() {
     if (tests.length === 0) {
-        testListContainer.innerHTML = '<div class="no-tests">Тесты не найдены</div>';
+        testListContainer.innerHTML = '<div class="no-tests">Тесты не найдены :(</div>';
         return;
     }
 
-    testListContainer.innerHTML = tests.map(test => `
-        <div class="test-card">
+    const testCards = await Promise.all(tests.map(async (test) => {
+        try {
+            const response = await fetch(`https://inor1loveee.github.io/Lotos/tests/${test.fileName}`);
+            const data = await response.json();
+            const questionCount = data.questions?.length || 0;
+            const estimatedTime = formatEstimatedTime(questionCount);
+            return { ...test, questionCount, estimatedTime };
+        } catch (e) {
+            console.warn(`Не удалось загрузить тест: ${test.fileName}`, e);
+            return { ...test, questionCount: 0, estimatedTime: '—' };
+        }
+    }));
+
+    testListContainer.innerHTML = testCards.map(test => `
+        <div class="test-card" data-id="${test.id}" data-file="${test.fileName}">
             <div class="test-card-header">
-                <h2>${escapeHtml(test.name)}</h2>
-            </div>
-            <div class="test-card-body">
-                <div class="test-info">
-                    <p><i class="fas fa-info-circle"></i> ${escapeHtml(test.description || 'Описание отсутствует')}</p>
-                    <p><i class="fas fa-question-circle"></i> Вопросов: ${test.questionCount || 0}</p>
-                    <p><i class="fas fa-clock"></i> Примерное время: ${test.estimatedTime || 'не указано'}</p>
-                    <p><i class="fas fa-chart-line"></i> Сложность: ${test.difficulty || 'не указана'}</p>
-                </div>
-                <button class="start-btn" data-id="${test.id}" data-file="${test.fileName}">
-                    Начать тест
+                <div class="test-card-title">${escapeHtml(test.name)}</div>
+                <button class="download-btn" title="Скачать тест" onclick="event.stopPropagation(); downloadTest('${test.fileName}')">
+                    <i class="fas fa-download"></i>
                 </button>
+            </div>
+            <div class="test-card-meta">
+                <span><i class="fas fa-question-circle"></i> Вопросов: ${test.questionCount}</span>
+                <span><i class="fas fa-clock"></i> ${test.estimatedTime}</span>
             </div>
         </div>
     `).join('');
 
-    document.querySelectorAll('.start-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const testId = button.getAttribute('data-id');
-            const fileName = button.getAttribute('data-file');
+    document.querySelectorAll('.test-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const testId = card.getAttribute('data-id');
+            const fileName = card.getAttribute('data-file');
             startTest(testId, fileName);
         });
     });
+}
+
+// Форматирует время прохождения: округляет до 5 минут и возвращает строку
+function formatEstimatedTime(questionCount) {
+    const secondsPerQuestion = 20;
+    const totalSeconds = questionCount * secondsPerQuestion;
+    const totalMinutes = Math.ceil(totalSeconds / 60);
+    const roundedMinutes = Math.ceil(totalMinutes / 5) * 5;
+
+    if (roundedMinutes >= 60) {
+        const hours = Math.floor(roundedMinutes / 60);
+        const minutes = roundedMinutes % 60;
+        if (minutes === 0) {
+            return `${hours} ч.`;
+        } else {
+            return `${hours} ч. ${minutes} мин.`;
+        }
+    } else {
+        return `${roundedMinutes} мин.`;
+    }
+}
+
+// Скачивает файл теста на устройство
+function downloadTest(fileName) {
+    const url = `https://inor1loveee.github.io/Lotos/tests/${fileName}`;
+    fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        })
+        .catch(err => {
+            alert('Ошибка при скачивании файла: ' + err.message);
+        });
 }
 
 // Функция для экранирования HTML
@@ -103,6 +150,7 @@ async function startTest(id, fileName) {
     testId = id;
     testListContainer.style.display = 'none';
     testContainer.style.display = 'block';
+    testContainer.classList.add('test-active');
     resultsContainer.style.display = 'none';
     testHeaderButtons.style.display = 'flex';
     header.style.display = 'none';
@@ -113,7 +161,6 @@ async function startTest(id, fileName) {
         const data = await response.json();
         currentTest = tests.find(t => t.id === id);
         currentQuestions = data.questions || [];
-        testTitle.textContent = currentTest?.description || 'Без описания';
 
         loadProgress();
         startTime = new Date();
@@ -189,6 +236,10 @@ function showQuestion(index) {
             return;
         }
         showQuestion(num - 1);
+
+        if (typeof adjustMobileLayout === 'function') {
+            setTimeout(adjustMobileLayout, 100);
+        }
     };
 
     const progressPercent = ((index + 1) / currentQuestions.length) * 100;
@@ -289,7 +340,7 @@ function showQuestion(index) {
 
     // Обновление текста кнопки "Вперёд"
     if (index === currentQuestions.length - 1) {
-        nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Завершить тест';
+        nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i>';
     } else {
         nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i>';
     }
@@ -308,7 +359,6 @@ function highlightAnswers() {
 
         if (isCorrect) {
             option.classList.add('correct');
-            //option.classList.add('highlight');
         }
 
         if (isSelected && !isCorrect) {
@@ -372,6 +422,7 @@ function showResults() {
     const timeStr = `${minutes} мин ${seconds} сек`;
 
     // Обновление DOM
+    testContainer.classList.remove('test-active');
     correctCountEl.textContent = `${correct} из ${total}`;
     scorePercentEl.textContent = `${percent}%`;
     timeSpentEl.textContent = timeStr;
@@ -385,6 +436,7 @@ function showResults() {
 
 // Возврат к списку тестов
 function backToList() {
+    testContainer.classList.remove('test-active');
     header.style.display = 'block';
     testContainer.style.display = 'none';
     resultsContainer.style.display = 'none';
@@ -400,10 +452,23 @@ function backToList() {
     hideAnswerHighlights();
 }
 
+// Обработка скролла для мобильных
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    if (window.innerWidth <= 768 && currentScroll > lastScroll && currentScroll > 100) {
+        document.querySelector('.controls-container').style.transform = 'translateY(100%)';
+    } else {
+        document.querySelector('.controls-container').style.transform = 'translateY(0)';
+    }
+    lastScroll = currentScroll;
+});
+
 // Инициализация приложения
 function init() {
     loadTests();
 
+    testContainer.style.display = 'none';
     backToListBtn.addEventListener('click', backToList);
 
     finishTestBtn.addEventListener('click', () => {
@@ -420,7 +485,6 @@ function init() {
         showAnswersBtn.classList.add('active');
         highlightAnswers();
 
-        // Сокращено до 1 секунды
         showAnswersTimeout = setTimeout(() => {
             hideAnswerHighlights();
             showAnswersTimeout = null;
@@ -437,7 +501,6 @@ function init() {
         if (currentQuestionIndex < currentQuestions.length - 1) {
             showQuestion(currentQuestionIndex + 1);
         } else {
-            // Завершение теста
             showResults();
         }
     });
@@ -446,10 +509,15 @@ function init() {
     restartTestBtn.addEventListener('click', () => {
         resetProgress();
         startTime = new Date();
-        showQuestion(0);
-        resultsContainer.style.display = 'none';
+
+        testListContainer.style.display = 'none';
         testContainer.style.display = 'block';
+        testContainer.classList.add('test-active');
+        resultsContainer.style.display = 'none';
         testHeaderButtons.style.display = 'flex';
+        header.style.display = 'none';
+
+        showQuestion(0);
     });
 
     backToTestsBtn.addEventListener('click', () => {

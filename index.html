@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,12 @@
     <link rel="stylesheet" href="style.css">
     <meta name="robots" content="noindex, nofollow">
 </head>
+
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-leaf"></i>
+                <i class="fa-solid fa-cube"></i>
             </div>
             <h1>JpTester Web</h1>
         </header>
@@ -20,10 +22,10 @@
         <!-- Кнопки управления тестом (появляются только во время прохождения) -->
         <div id="test-header-buttons" class="test-header-buttons">
             <button id="back-to-list" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Назад к списку тестов
+                <i class="fas fa-arrow-left"></i> Cписок тестов
             </button>
             <button id="finish-test" class="back-btn finish-btn">
-                <i class="fas fa-flag"></i> Завершить тест
+                <i class="fas fa-flag"></i> Завершить
             </button>
         </div>
 
@@ -32,27 +34,23 @@
         </div>
 
         <div id="test-container">
-            <div class="test-header">
-                <h2 id="test-title">Краткое описание</h2>
-            </div>
-            
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
-            
+
             <div class="question-container">
                 <div class="question-number" id="question-number-display">Вопрос 1 из 10</div>
                 <div class="question-text" id="question-text">Текст вопроса будет здесь</div>
-                
+
                 <div class="answers-container" id="answers-container">
                 </div>
             </div>
-            
+
             <div class="controls-container">
                 <button class="show-answers-btn" id="show-answers-btn">
                     <i class="fas fa-check"></i>
                 </button>
-                
+
                 <div class="nav-controls">
                     <button class="nav-btn" id="prev-btn" disabled>
                         <i class="fas fa-arrow-left"></i>
@@ -96,4 +94,5 @@
     </div>
     <script src="app.js"></script>
 </body>
+
 </html>

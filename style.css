@@ -43,7 +43,7 @@ header h1 {
     font-size: 2.5rem;
     color: var(--primary);
     margin-bottom: 0.5rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 header p {
@@ -99,8 +99,8 @@ header p {
 /* Страница списка тестов */
 #test-list-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
     margin-top: 20px;
 }
 
@@ -110,33 +110,74 @@ header p {
     overflow: hidden;
     box-shadow: var(--box-shadow);
     transition: var(--transition);
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
 }
 
 .test-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .test-card-header {
     background: linear-gradient(120deg, var(--primary), var(--secondary));
     color: white;
-    padding: 1.5rem;
-    text-align: center;
-}
-
-.test-card-header h2 {
-    font-size: 1.6rem;
-    margin-bottom: 0.5rem;
-}
-
-.test-card-body {
-    padding: 1.5rem;
-    flex-grow: 1;
+    padding: 16px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.test-card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: left;
+    flex: 1;
+    margin-right: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.download-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.download-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.test-card-meta {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--gray);
+    background: var(--light);
+}
+
+.test-card-meta i {
+    color: var(--primary);
+    margin-right: 4px;
+    width: 16px;
+    text-align: center;
 }
 
 .test-info {
@@ -184,18 +225,6 @@ header p {
     box-shadow: var(--box-shadow);
     overflow: hidden;
     margin-top: 20px;
-}
-
-.test-header {
-    background: linear-gradient(120deg, var(--secondary), #483d8b);
-    color: white;
-    padding: 1.5rem;
-    text-align: center;
-}
-
-.test-header h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
 }
 
 .question-container {
@@ -268,7 +297,7 @@ header p {
 /* Стили для показа правильных/неправильных ответов */
 .answer-option.correct {
     background: rgba(75, 192, 102, 0.2) !important;
-    border-color: #4caf50 !important; 
+    border-color: #4caf50 !important;
 }
 
 .answer-option.incorrect {
@@ -314,7 +343,7 @@ header p {
     border-radius: 50%;
     border: none;
     background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     font-size: 1.2rem;
     color: var(--primary);
     cursor: pointer;
@@ -351,7 +380,7 @@ header p {
     font-size: 1.2rem;
     cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .show-answers-btn:hover {
@@ -387,7 +416,6 @@ header p {
     height: 8px;
     background: var(--light-gray);
     border-radius: 4px;
-    margin: 20px 0;
     overflow: hidden;
 }
 
@@ -464,7 +492,8 @@ header p {
     color: var(--primary);
 }
 
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 600;
@@ -495,75 +524,158 @@ header p {
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 2rem;
-    }
-    
-    .logo {
-        font-size: 2.8rem;
-    }
-    
-    .test-card-header h2 {
-        font-size: 1.4rem;
-    }
-    
-    .question-text {
-        font-size: 1.2rem;
-    }
-    
-    .answer-text {
-        font-size: 1rem;
-    }
-    
-    .controls-container {
+    #test-container:not([style*="display: none"]) {
+        display: flex;
         flex-direction: column;
+        height: calc(100vh - 40px);
+        margin-top: 10px;
     }
-    
+
+    #test-container:not([style*="display: none"]) .question-container {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 80px;
+        margin-bottom: 0;
+        padding: 1.2rem;
+    }
+
+    /* Фиксирует кнопки ТОЛЬКО когда тест виден */
+    #test-container:not([style*="display: none"]) .controls-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid var(--light-gray);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        padding: 12px 16px;
+        z-index: 100;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        justify-content: center;
+    }
+
+    /* Центрирует элементы управления */
+    #test-container:not([style*="display: none"]) .nav-controls {
+        width: auto;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    #test-container:not([style*="display: none"]) .controls-container>.show-answers-btn {
+        position: absolute;
+        right: 16px;
+        bottom: 120%; /* ВЫШЕ панели */
+        right: 10%;
+        width: 50px;
+        height: 50px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    #test-container:not([style*="display: none"]) .controls-container>.nav-controls {
+        margin: 0 auto;
+    }
+
+    /* Контейнер вопросов — будет скроллируемым */
+    .question-container {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 80px;
+        /* Отступ для кнопок внизу */
+        margin-bottom: 0;
+        padding: 1.2rem;
+    }
+
+    /* Контейнер с кнопками — фиксируем внизу */
+    .controls-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid var(--light-gray);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        padding: 12px 16px;
+        z-index: 100;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        transition: transform 0.25s ease-in-out;
+    }
+
+    .controls-container.hidden {
+        transform: translateY(100%);
+    }
+
+    .test-active .controls-container {
+        display: flex;
+    }
+
+    /* Центрирует элементы управления */
     .nav-controls {
         width: 100%;
-        justify-content: space-between;
+        justify-content: space-around;
     }
-    
+
+    /* Уменьшает размер кнопок для мобильных */
+    .nav-btn,
+    .show-answers-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    /* Кнопки более крупными для удобства */
     .current-question {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        min-width: 90px;
     }
-    
-    .btn-primary, .btn-secondary {
+
+    .back-btn {
         width: 100%;
-        margin: 8px 0;
-    }
-    
-    .test-header-buttons {
-        flex-direction: column;
-        align-items: center;
+        max-width: 300px;
+        justify-content: center;
     }
 }
 
 @media (max-width: 480px) {
-    .test-card {
-        min-width: 280px;
+
+    /* Дополнительные улучшения для очень маленьких экранов */
+    .controls-container {
+        padding: 8px 12px;
+        display: none;
     }
-    
-    .question-container, .controls-container {
-        padding: 1.2rem;
+
+    .nav-btn,
+    .show-answers-btn {
+        width: 40px;
+        height: 40px;
     }
-    
+
+    .current-question {
+        font-size: 1.2rem;
+        min-width: 75px;
+    }
+
+    /* Уменьшает отступы в контенте */
+    .question-container {
+        padding: 1rem;
+        padding-bottom: 75px;
+    }
+
     .question-text {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
     }
-    
-    .nav-btn, .show-answers-btn {
-        width: 42px;
-        height: 42px;
-        font-size: 1rem;
+
+    .answer-option {
+        padding: 14px 16px;
+        min-height: 50px;
     }
-    
-    .modal-content {
-        padding: 1.5rem;
-        width: 95%;
-    }
-    
-    .results-card {
-        padding: 1.5rem;
+
+    .answer-text {
+        font-size: 0.95rem;
     }
 }
