@@ -32,6 +32,39 @@ const totalQuestionsCountEl = document.getElementById('total-questions-count');
 const restartTestBtn = document.getElementById('restart-test');
 const backToTestsBtn = document.getElementById('back-to-tests');
 
+// Переключение темы
+const themeToggleBtn = document.getElementById('theme-toggle');
+const body = document.body;
+
+// Проверка сохраненной темы
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    body.classList.add('dark-theme');
+    themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+}
+
+// Обработчик переключения
+themeToggleBtn.addEventListener('click', () => {
+    body.classList.toggle('dark-theme');
+    
+    if (body.classList.contains('dark-theme')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        localStorage.setItem('theme', 'light');
+        themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+    }
+});
+
+function updateThemeButtonVisibility() {
+    const onMainScreen = (
+        testListContainer.style.display !== 'none' &&
+        testContainer.style.display === 'none' &&
+        resultsContainer.style.display === 'none'
+    );
+    themeToggleBtn.style.display = onMainScreen ? 'flex' : 'none';
+}
+
 // Функция загрузки списка тестов
 async function loadTests() {
     try {
@@ -154,6 +187,8 @@ async function startTest(id, fileName) {
     resultsContainer.style.display = 'none';
     testHeaderButtons.style.display = 'flex';
     header.style.display = 'none';
+    
+    updateThemeButtonVisibility();
 
     try {
         const response = await fetch(`https://inor1loveee.github.io/Lotos/tests/${fileName}`);
@@ -432,6 +467,8 @@ function showResults() {
     testContainer.style.display = 'none';
     resultsContainer.style.display = 'flex';
     testHeaderButtons.style.display = 'none';
+
+    updateThemeButtonVisibility();
 }
 
 // Возврат к списку тестов
@@ -450,6 +487,7 @@ function backToList() {
         showAnswersTimeout = null;
     }
     hideAnswerHighlights();
+    updateThemeButtonVisibility();
 }
 
 // Обработка скролла для мобильных
