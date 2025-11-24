@@ -839,12 +839,16 @@ header p {
 }
 
 /* Плавные переходы для всех элементов */
-    *,
-    *::before,
-    *::after {
-        transition:
-            background-color 0.4s ease,
-            color 0.4s ease,
-            border-color 0.4s ease,
-            box-shadow 0.4s ease;
-    }
+*,
+*::before,
+*::after {
+    transition:
+        background-color 0.4s ease,
+        color 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
